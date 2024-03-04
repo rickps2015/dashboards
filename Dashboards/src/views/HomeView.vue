@@ -12,10 +12,9 @@
       </div>
       <div class="row mt-4 justify-content-end">
         <div class="col-auto kpi-card green-gradient">
-          <span class="card-text">Nível de Estoque Atual</span>
+          <span class="card-text">Nível de Estoque</span>
           <span class="card-value text-center">Qtd. 53.000</span>
         </div>
-
 
         <div class="col-auto kpi-card purple-gradient">
           <span class="card-text">Giro de Estoque Mensal</span>
@@ -346,10 +345,9 @@ export default {
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '0%',
         top: '10%',
         containLabel: true,
-        height: '80%',
+        height: '74%',
       },
       xAxis: {
         type: 'category',
