@@ -9,6 +9,8 @@ import router from './router'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+import 'animate.css'
+
 const app = createApp(App)
 
 app.use(createPinia())
