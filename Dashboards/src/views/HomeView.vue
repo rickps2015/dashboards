@@ -4,13 +4,13 @@
       <h5 class="card-title">Dashboard</h5>
       <h6 class="card-text">Bem-vindo ao Dashboard de Produtos do Estoque.</h6>
       <div class="row">
-        <div class="col-3">
+        <div class="col-auto">
           <select class="form-select" v-model="selectedItems">
             <option v-for="item in items" :key="item" :value="item">{{ item }}</option>
           </select>
         </div>
       </div>
-      <div class="row mt-4 justify-content-end">
+      <div class="row mt-4 justify-content-center">
         <div class="col-auto kpi-card green-gradient">
           <span class="card-text">Nível de Estoque</span>
           <span class="card-value text-center">Qtd. 53.000</span>
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="row mt-4 justify-content-center">
-        <div class="col-8 p-1">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 col-xxl-8 p-1">
           <div class="col-12">
             <div class="card-estilizado">
               <h6 class="card-title text-center">Estoque minimo de produtos no armazém</h6>
@@ -41,7 +41,7 @@
             </div>
           </div>
         </div>
-        <div class="col-4 p-1">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 col-xxl-4 p-1">
           <div class="col-12">
             <div class="card-estilizado">
               <h6 class="card-title text-center">Produtos em maior quantidade no estoque</h6>
@@ -51,13 +51,13 @@
         </div>
       </div>
       <div class="row justify-aligm-center">
-        <div class="col-6 p-1">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6 p-1">
           <div class="card-estilizado">
             <h6 class="card-title text-center">Entrada e sáida do armazém</h6>
             <div id="chart3" style="height:300px;"></div>
           </div>
         </div>
-        <div class="col-6 p-1">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6 p-1">
           <div class="card-estilizado">
             <h6 class="card-title text-center">Entrada e sáida do armazém</h6>
             <div id="chart1" style="height:300px;"></div>
@@ -69,15 +69,6 @@
 </template>
 
 <style>
-.icon {
-  float: right;
-  font-size: 500%;
-  position: relative;
-  top: 0rem;
-  right: -0.3rem;
-  opacity: .16;
-}
-
 .red-gradient {
   background-color: #fdb67f;
   background-image: linear-gradient(160deg, #fdb67f 0%, #cd5252 100%);
@@ -105,7 +96,6 @@
   padding: 1em;
   border-radius: 0.8em;
   font-family: sans-serif;
-  min-width: 180px;
   margin-left: 0.5em;
   margin-top: 0.5em;
 }
@@ -120,6 +110,22 @@
   display: block;
   font-size: 70%;
   padding-left: 0.2em;
+}
+
+@media screen and (min-width: 501px) and (max-width: 608px) {
+  .card-value {
+    font-size: 100%;
+  }
+}
+
+@media screen and (min-width: 320px) and (max-width: 500px) {
+  .card-value {
+    font-size: 70%;
+  }
+
+  .card-text {
+  font-size: 60%;
+}
 }
 </style>
 
@@ -137,6 +143,7 @@ export default {
   mounted() {
     const chart1 = echarts.init(document.getElementById('chart1'));
     chart1.setOption({
+      responsive: true,
       tooltip: {},
       legend: {},
       toolbox: {
@@ -183,7 +190,8 @@ export default {
     });
 
     const chart2 = echarts.init(document.getElementById('chart2'));
-    chart2.setOption({
+      var options = {
+      responsive: true,
       tooltip: {
         trigger: 'item',
         formatter: '{a} <br/>{b}: {c} ({d}%)'
@@ -229,7 +237,8 @@ export default {
                 color: '#fff',
                 backgroundColor: '#4C5058',
                 padding: [3, 3],
-                borderRadius: 4
+                borderRadius: 4,
+                fontSize: 14,
               }
             }
           },
@@ -245,10 +254,29 @@ export default {
           ]
         }
       ]
-    });
+    };
+
+    // Usar media queries para adaptar o gráfico
+    function resizeChart() {
+      var width = document.getElementById('chart2').offsetWidth;
+      if (width < 600) {
+        options.series[0].radius = ['6%', '12%'];
+        options.series[0].label.rich.b.fontSize = 10;
+        options.series[0].label.rich.per.fontSize = 10;
+      } else {
+        options.series[0].radius = ['40%', '20%'];
+        options.series[0].label.rich.b.fontSize = 14;
+        options.series[0].label.rich.per.fontSize = 14;
+      }
+      chart2.setOption(options);
+    }
+
+    window.addEventListener('resize', resizeChart);
+    resizeChart();
 
     const chart3 = echarts.init(document.getElementById('chart3'));
     chart3.setOption({
+      responsive: true,
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -318,6 +346,7 @@ export default {
 
     const chart4 = echarts.init(document.getElementById('chart4'));
     chart4.setOption({
+      responsive: true,
       tooltip: {},
       legend: {},
       toolbox: {
@@ -384,6 +413,7 @@ export default {
 
     const chart5 = echarts.init(document.getElementById('chart5'));
     chart5.setOption({
+      responsive: true,
       tooltip: {},
       legend: {},
       toolbox: {
@@ -420,6 +450,15 @@ export default {
         },
       ]
     });
+
+    // Redimensionar o gráfico ao redimensionar a janela
+    window.onresize = function () {
+      chart1.resize();
+      chart2.resize();
+      chart3.resize();
+      chart4.resize();
+      chart5.resize();
+    };
   },
 }
 </script>
