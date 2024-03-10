@@ -26,6 +26,11 @@
           <span class="card-value text-center">6,54% </span>
         </div>
       </div>
+      <div class="row justify-content-end">
+        <div class="col-auto">
+          <button id="btnDownload" class="form-control fw-bold" @click="downloadExcel(dados_chart1)">Download</button>
+        </div>
+      </div>
       <div class="row mt-4 justify-content-center">
         <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 col-xxl-8 p-1">
           <div class="col-12">
@@ -112,6 +117,11 @@
   padding-left: 0.2em;
 }
 
+#btnDownload:hover {
+  background-color: #6bcf69;
+  /* Change color on hover */
+}
+
 @media screen and (min-width: 501px) and (max-width: 608px) {
   .card-value {
     font-size: 100%;
@@ -124,20 +134,31 @@
   }
 
   .card-text {
-  font-size: 60%;
-}
+    font-size: 60%;
+  }
 }
 </style>
 
 <script>
 import * as echarts from 'echarts';
+import * as XLSX from 'xlsx';
 
 export default {
   name: 'HomeView',
   data() {
     return {
       selectedItems: 'Selecione um Armazém',
-      items: ['Selecione um Armazém', 'Armazém 1', 'Armazém 2', 'Armazém 3', 'Armazém 4']
+      items: ['Selecione um Armazém', 'Armazém 1', 'Armazém 2', 'Armazém 3', 'Armazém 4'],
+      dados_chart1: [
+        ['Produto', 'Entrada', 'Saída'],
+        ['Produto A icww vwy8v8ywby8vwv wbvybv', 400, 300],
+        ['Produto B', 600, 200],
+        ['Produto C', 750, 550],
+        ['Produto D', 480, 380],
+        ['Produto E', 470, 430],
+        ['Produto F', 510, 200],
+        ['Produto G', 630, 530],
+      ],
     };
   },
   mounted() {
@@ -190,7 +211,7 @@ export default {
     });
 
     const chart2 = echarts.init(document.getElementById('chart2'));
-      var options = {
+    var options = {
       responsive: true,
       tooltip: {
         trigger: 'item',
@@ -459,6 +480,39 @@ export default {
       chart4.resize();
       chart5.resize();
     };
+  },
+  methods: {
+    downloadExcel(data) {
+      // Criar uma nova instância de uma planilha Excel
+      const workbook = XLSX.utils.book_new();
+
+      // Adicionar a matriz de dados como uma nova planilha
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+      // Aplicar formatação de tabela
+      worksheet["!autofilter"] = { ref: XLSX.utils.encode_range(XLSX.utils.decode_range(worksheet['!ref'])) };
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+      // Converter o livro de trabalho em um arquivo binário
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+      // Criar um blob a partir dos dados binários
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      // Criar um URL para o blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Criar um link para o URL do blob e disparar um clique para iniciar o download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Estoque.xlsx';
+      document.body.appendChild(a);
+      a.click();
+
+      // Limpar o URL do blob após o download
+      window.URL.revokeObjectURL(url);
+    },
   },
 }
 </script>
