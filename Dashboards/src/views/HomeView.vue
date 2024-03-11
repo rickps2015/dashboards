@@ -522,11 +522,6 @@ export default {
         worksheet['!cols'][i] = { width: maxWidth };
       }
 
-      // // Definir o estilo para a primeira linha (índice 0)
-      // const firstRowStyle = { font: { bold: true }, fill: { fgColor: { rgb: "008000" } } };
-      // this.applyRowStyle(worksheet, 0, firstRowStyle);
-      // console.log(worksheet);
-
       // Aplicar formatação de filtro automático
       worksheet["!autofilter"] = { ref: XLSX.utils.encode_range(XLSX.utils.decode_range(worksheet['!ref'])) };
 
@@ -550,18 +545,6 @@ export default {
 
       // Limpar o URL do blob após o download
       window.URL.revokeObjectURL(url);
-    },
-    applyRowStyle(sheet, rowIndex, style) {
-      sheet['!rows'] = [];
-      const range = XLSX.utils.decode_range(sheet['!ref']);
-      for (let colIndex = range.s.c; colIndex <= range.e.c; colIndex++) {
-        const cellAddress = { r: rowIndex, c: colIndex };
-        const cellRef = XLSX.utils.encode_cell(cellAddress);
-        if (!sheet[cellRef]) continue;
-        if (!sheet[cellRef].s) sheet[cellRef].s = {};
-        Object.assign(sheet[cellRef].s, style);
-        sheet['!rows'][rowIndex] = { style: style };
-      }
     },
   },
 }
