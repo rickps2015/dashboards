@@ -4,12 +4,23 @@
       <h5 class="card-title">Dashboard</h5>
       <h6 class="card-text">Bem-vindo ao Dashboard de Produtos do Estoque.</h6>
       <div class="row">
-        <div class="col-auto">
+        <div class="col-12 col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto p-1">
+          <label for="selectArmazem" class="p-0">Armazém</label>
           <select class="form-select" v-model="selectedItems">
             <option v-for="item in items" :key="item" :value="item">{{ item }}</option>
           </select>
         </div>
+        <div class="col-12 col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto p-1">
+          <label for="dataInicio" class="p-0">Data Início</label>
+          <input id="dataInicio" type="datetime-local" class="form-control">
+        </div>
+        <div class="col-12 col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto p-1">
+          <label for="dataFim" class="p-0">Data Fim</label>
+          <input id="dataFim" type="datetime-local" class="form-control">
+        </div>
       </div>
+
+      <!-- Cards de KPIs -->
       <div class="row mt-4 justify-content-center">
         <div class="col-auto kpi-card green-gradient">
           <span class="card-text">Nível de Estoque</span>
@@ -26,6 +37,18 @@
           <span class="card-value text-center">6,54% </span>
         </div>
       </div>
+
+      <!-- Botão de Download -->
+      <div class="row justify-content-end">
+        <div class="col-auto p-1">
+          <button id="btnDownload" class="form-control fw-bold" @click="downloadExcel(dados_chart1)">
+            Download
+            <font-awesome-icon icon="fa-solid fa-download" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Gráficos -->
       <div class="row mt-4 justify-content-center">
         <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 col-xxl-8 p-1">
           <div class="col-12">
@@ -112,6 +135,11 @@
   padding-left: 0.2em;
 }
 
+#btnDownload:hover {
+  background-color: rgba(114, 228, 92, 0.5);
+  /* Change color on hover */
+}
+
 @media screen and (min-width: 501px) and (max-width: 608px) {
   .card-value {
     font-size: 100%;
@@ -124,20 +152,31 @@
   }
 
   .card-text {
-  font-size: 60%;
-}
+    font-size: 60%;
+  }
 }
 </style>
 
 <script>
 import * as echarts from 'echarts';
+import * as XLSX from 'xlsx';
 
 export default {
   name: 'HomeView',
   data() {
     return {
       selectedItems: 'Selecione um Armazém',
-      items: ['Selecione um Armazém', 'Armazém 1', 'Armazém 2', 'Armazém 3', 'Armazém 4']
+      items: ['Selecione um Armazém', 'Armazém 1', 'Armazém 2', 'Armazém 3', 'Armazém 4'],
+      dados_chart1: [
+        ['Produto', 'Entrada', 'Saída'],
+        ['Produto A icww vwy8v8ywby8vwv wbvybv', 400, 300],
+        ['Produto B', 600, 200],
+        ['Produto C', 750, 550],
+        ['Produto D', 480, 380],
+        ['Produto E', 470, 430],
+        ['Produto F', 510, 200],
+        ['Produto G', 630, 530],
+      ],
     };
   },
   mounted() {
@@ -190,7 +229,7 @@ export default {
     });
 
     const chart2 = echarts.init(document.getElementById('chart2'));
-      var options = {
+    var options = {
       responsive: true,
       tooltip: {
         trigger: 'item',
@@ -459,6 +498,54 @@ export default {
       chart4.resize();
       chart5.resize();
     };
+  },
+  methods: {
+    downloadExcel(data) {
+      // Criar uma nova instância de uma planilha Excel
+      const workbook = XLSX.utils.book_new();
+
+      // Adicionar a matriz de dados como uma nova planilha
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+      // Ajustar automaticamente a largura das colunas ao conteúdo das células
+      worksheet['!cols'] = [];
+      const range = XLSX.utils.decode_range(worksheet['!ref']);
+      for (let i = range.s.c; i <= range.e.c; ++i) {
+        let maxWidth = 0;
+        for (let j = range.s.r; j <= range.e.r; ++j) {
+          const cell = worksheet[XLSX.utils.encode_cell({ r: j, c: i })];
+          if (!cell) continue;
+          const cellText = XLSX.utils.format_cell(cell);
+          const cellWidth = cellText.length + 2;
+          if (cellWidth > maxWidth) maxWidth = cellWidth;
+        }
+        worksheet['!cols'][i] = { width: maxWidth };
+      }
+
+      // Aplicar formatação de filtro automático
+      worksheet["!autofilter"] = { ref: XLSX.utils.encode_range(XLSX.utils.decode_range(worksheet['!ref'])) };
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Dados do Estoque');
+
+      // Converter o livro de trabalho em um arquivo binário
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+      // Criar um blob a partir dos dados binários
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      // Criar um URL para o blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Criar um link para o URL do blob e disparar um clique para iniciar o download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Estoque.xlsx';
+      document.body.appendChild(a);
+      a.click();
+
+      // Limpar o URL do blob após o download
+      window.URL.revokeObjectURL(url);
+    },
   },
 }
 </script>
