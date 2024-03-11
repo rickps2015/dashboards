@@ -12,11 +12,11 @@
         </div>
         <div class="col-12 col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto p-1">
           <label for="dataInicio" class="p-0">Data Início</label>
-          <input id="dataInicio" type="datetime-local" class="form-control">
+          <input id="dataInicio" type="datetime-local" class="form-control" v-model="dataHoraInicio">
         </div>
         <div class="col-12 col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto p-1">
           <label for="dataFim" class="p-0">Data Fim</label>
-          <input id="dataFim" type="datetime-local" class="form-control">
+          <input id="dataFim" type="datetime-local" class="form-control" v-model="dataHoraFim">
         </div>
       </div>
 
@@ -165,6 +165,8 @@ export default {
   name: 'HomeView',
   data() {
     return {
+      dataHoraInicio: '' ,
+      dataHoraFim: '',
       selectedItems: 'Selecione um Armazém',
       items: ['Selecione um Armazém', 'Armazém 1', 'Armazém 2', 'Armazém 3', 'Armazém 4'],
       dados_chart1: [
@@ -180,6 +182,9 @@ export default {
     };
   },
   mounted() {
+    // Define a hora atual quando o componente é montado
+    this.setDataHoraAtual();
+
     const chart1 = echarts.init(document.getElementById('chart1'));
     chart1.setOption({
       responsive: true,
@@ -500,6 +505,19 @@ export default {
     };
   },
   methods: {
+    setDataHoraAtual() {
+      const dataAtual = new Date();
+      const dataFormatada = this.formatarData(dataAtual);
+      const horaFormatada = this.formatarHora(dataAtual);
+      this.dataHoraInicio = dataFormatada + 'T' + horaFormatada;
+      this.dataHoraFim = dataFormatada + 'T' + horaFormatada;
+    },
+    formatarData(data) {
+      return data.getFullYear() + '-' + ('0' + (data.getMonth() + 1)).slice(-2) + '-' + ('0' + data.getDate()).slice(-2);
+    },
+    formatarHora(data) {
+      return ('0' + data.getHours()).slice(-2) + ':' + ('0' + data.getMinutes()).slice(-2);
+    },
     downloadExcel(data) {
       // Criar uma nova instância de uma planilha Excel
       const workbook = XLSX.utils.book_new();
