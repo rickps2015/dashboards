@@ -4,17 +4,17 @@
       <h5 class="card-title">Dashboard</h5>
       <h6 class="card-text">Bem-vindo ao Dashboard de Produtos do Estoque.</h6>
       <div class="row">
-        <div class="col-auto p-1">
+        <div class="col-12 col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto p-1">
           <label for="selectArmazem" class="p-0">Armazém</label>
           <select class="form-select" v-model="selectedItems">
             <option v-for="item in items" :key="item" :value="item">{{ item }}</option>
           </select>
         </div>
-        <div class="col-auto p-1">
+        <div class="col-12 col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto p-1">
           <label for="dataInicio" class="p-0">Data Início</label>
           <input id="dataInicio" type="datetime-local" class="form-control">
         </div>
-        <div class="col-auto p-1">
+        <div class="col-12 col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto p-1">
           <label for="dataFim" class="p-0">Data Fim</label>
           <input id="dataFim" type="datetime-local" class="form-control">
         </div>
