@@ -16,6 +16,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/vue-fontawesome": "^3.0.6",
     "animate.css": "^4.1.1",
     "bootstrap": "^5.3.3",
     "echarts": "^5.5.0",

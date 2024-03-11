@@ -4,12 +4,23 @@
       <h5 class="card-title">Dashboard</h5>
       <h6 class="card-text">Bem-vindo ao Dashboard de Produtos do Estoque.</h6>
       <div class="row">
-        <div class="col-auto">
+        <div class="col-auto p-1">
+          <label for="selectArmazem" class="p-0">Armazém</label>
           <select class="form-select" v-model="selectedItems">
             <option v-for="item in items" :key="item" :value="item">{{ item }}</option>
           </select>
         </div>
+        <div class="col-auto p-1">
+          <label for="dataInicio" class="p-0">Data Início</label>
+          <input id="dataInicio" type="datetime-local" class="form-control">
+        </div>
+        <div class="col-auto p-1">
+          <label for="dataFim" class="p-0">Data Fim</label>
+          <input id="dataFim" type="datetime-local" class="form-control">
+        </div>
       </div>
+
+      <!-- Cards de KPIs -->
       <div class="row mt-4 justify-content-center">
         <div class="col-auto kpi-card green-gradient">
           <span class="card-text">Nível de Estoque</span>
@@ -26,11 +37,16 @@
           <span class="card-value text-center">6,54% </span>
         </div>
       </div>
+
+      <!-- Botão de Download -->
       <div class="row justify-content-end">
-        <div class="col-auto">
+        <div class="col-auto p-1">
           <button id="btnDownload" class="form-control fw-bold" @click="downloadExcel(dados_chart1)">Download</button>
+          <i class="fa-solid fa-download"></i>
         </div>
       </div>
+
+      <!-- Gráficos -->
       <div class="row mt-4 justify-content-center">
         <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 col-xxl-8 p-1">
           <div class="col-12">
@@ -118,7 +134,7 @@
 }
 
 #btnDownload:hover {
-  background-color: #6bcf69;
+  background-color: rgba(114, 228, 92, 0.5);
   /* Change color on hover */
 }
 
