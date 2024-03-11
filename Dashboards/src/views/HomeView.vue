@@ -41,8 +41,10 @@
       <!-- Botão de Download -->
       <div class="row justify-content-end">
         <div class="col-auto p-1">
-          <button id="btnDownload" class="form-control fw-bold" @click="downloadExcel(dados_chart1)">Download</button>
-          <i class="fa-solid fa-download"></i>
+          <button id="btnDownload" class="form-control fw-bold" @click="downloadExcel(dados_chart1)">
+            Download
+            <font-awesome-icon icon="fa-solid fa-download" />
+          </button>
         </div>
       </div>
 
@@ -505,7 +507,22 @@ export default {
       // Adicionar a matriz de dados como uma nova planilha
       const worksheet = XLSX.utils.aoa_to_sheet(data);
 
-      // Aplicar formatação de tabela
+      // Ajustar automaticamente a largura das colunas ao conteúdo das células
+      worksheet['!cols'] = [];
+      const range = XLSX.utils.decode_range(worksheet['!ref']);
+      for (let i = range.s.c; i <= range.e.c; ++i) {
+        let maxWidth = 0;
+        for (let j = range.s.r; j <= range.e.r; ++j) {
+          const cell = worksheet[XLSX.utils.encode_cell({ r: j, c: i })];
+          if (!cell) continue;
+          const cellText = XLSX.utils.format_cell(cell);
+          const cellWidth = cellText.length + 2;
+          if (cellWidth > maxWidth) maxWidth = cellWidth;
+        }
+        worksheet['!cols'][i] = { width: maxWidth };
+      }
+
+      // Aplicar formatação de filtro automático
       worksheet["!autofilter"] = { ref: XLSX.utils.encode_range(XLSX.utils.decode_range(worksheet['!ref'])) };
 
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
